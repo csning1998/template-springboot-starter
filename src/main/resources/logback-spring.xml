@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+<!-- Console Appender: Outputs logs to the console -->
+<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!--
+        Encoder defines how the logs will be formatted before being output.
+    -->
+    <encoder>
+        <!--
+            Pattern specifies the log format.
+            Components:
+            - %d{yyyy-MM-dd HH:mm:ss.SSS}: Timestamp in "Year-Month-Day Hour:Minute:Second.Millisecond" format.
+            - [%thread]: Thread name where the log message is being generated.
+            - %-5level: Log level (INFO, DEBUG, ERROR), padded to 5 characters and left-aligned.
+            - %logger{50}: Logger name, truncated to 50 characters if longer.
+            - %msg: The actual log message.
+            - %n: Line separator (new line).
+        -->
+        <pattern>
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
+        </pattern>
+    </encoder>
+</appender>
+
+<!-- Rolling File Appender: Logs to files with automatic rotation -->
+<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/app.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <!-- File name pattern with date and index -->
+        <fileNamePattern>logs/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <!-- Maximum history of 180 days -->
+        <maxHistory>180</maxHistory>
+        <!-- Maximum size of a single log file -->
+        <maxFileSize>100MB</maxFileSize>
+    </rollingPolicy>
+    <encoder>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+    </encoder>
+</appender>
+
+<!-- Profile-specific Logging -->
+<springProfile name="dev">
+    <!-- For development: log to console -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</springProfile>
+
+<springProfile name="prod">
+    <!-- For production: log to files -->
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+</springProfile>
+
+</configuration>
